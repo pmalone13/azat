@@ -189,6 +189,9 @@ function mount_share {
   mount_share="//${STORAGE_ACCOUNT}.file.core.windows.net/${ATL_JIRA_SHARED_HOME_NAME}"
   
   log "creating credentials at ${creds_file}"
+  log "using st acct... ${STORAGE_ACCOUNT}"
+  log "using st key... ${STORAGE_KEY}"
+  log "using..." 
   echo "username=${STORAGE_ACCOUNT}" >> ${creds_file}
   echo "password=${STORAGE_KEY}" >> ${creds_file}
   chmod 600 ${creds_file}
@@ -200,15 +203,16 @@ function mount_share {
     log "location ${ATL_JIRA_SHARED_HOME} is already mounted"
     return 0
   fi
-  
+  log "about to mount..." 
   [ -d "${ATL_JIRA_SHARED_HOME}" ] || mkdir -p "${ATL_JIRA_SHARED_HOME}"
   mount -t cifs ${mount_share} ${ATL_JIRA_SHARED_HOME} -o ${mount_options}
+  log "after mount and checking..." 
   
   if [ ! $(cat /etc/mtab | grep -o "${ATL_JIRA_SHARED_HOME}") ];
   then
     error "mount failed"
   fi
-  
+  log "after checking..." 
   if [ ${persist} ];
   then
     # create a backup of fstab
