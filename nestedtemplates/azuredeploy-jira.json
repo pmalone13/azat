@@ -1,9 +1,45 @@
 {
     "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
     "contentVersion": "1.0.0.0",
-    "parameters": {
+       "parameters": {
+        "vnetName": {
+            "type": "string",
+			//"defaultValue": "jiravnet"
+            "metadata": {
+                "description": "The name of the Jira virtual network."
+            }
+        },
+        "appSubnetName": {
+            "type": "string",
+			//"defaultValue": "jiraclustersubnet"			
+            "metadata": {
+                "description": "The name of the subnet within the Jira virtual network where the Jira cluster is located."
+            }
+        },
+        "gtwySubnetName": {
+            "type": "string",
+			//"defaultValue": "jiraappgwsubnet"			
+            "metadata": {
+                "description": "The name of the Jira virtual network subnet where the Application Gateway is located."
+            }
+        },
+        "jumpboxName": {
+            "type": "string",
+			//"defaultValue": "jirajumpbox"			
+            "metadata": {
+                "description": "The name of the Jumpbox."
+            }
+        },
+        "jumpboxPublicIpAddress": {
+            "type": "string",
+			//"defaultValue": "52.235.162.28"			
+            "metadata": {
+                "description": "The public IP address of the Jumpbox."
+            }
+        },		
         "location": {
             "type": "string",
+            "defaultValue": "[resourceGroup().location]",
             "metadata": {
                 "description": "The region where Azure will house the deployment."
             },
@@ -24,7 +60,7 @@
         },
         "clusterSize": {
             "type": "int",
-            "defaultValue": 2,
+            "defaultValue": 1,
             "metadata": {
                 "description": "The number of nodes in the Jira cluster."
             },
@@ -56,6 +92,7 @@
         },
         "sshKey": {
             "type": "string",
+			"defaultValue": "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQDUUp1aVX5ogJSjvz1oy1Z/fHfMwLXyMi+mrjao9cX8tFmh+H0lYZulEF9APJwm/w50KMaeLZnsOQY6xZQV0Kn0O48+TJxsAiiEGSegVUt3I9OvsdwxAf5SOps21cKki1DXiEY86PZ+Jyd3KUj++aE274M1Six+e8eRDBhYP/pHtg5Fe6GLwuoLXervmqI/EDfGpI9AxgvXFhwxbbgeVV3UljW2uT7lRw1AirQDRt35iahYZTNkgC0xrb6UGw7ISaa2n5JCjxgUrrTY1sQY4m83cAFPeDIqW5scgsbHf9ppXOwp1g+12ayhoxOL5TuODE6nCp/bT2gXw1DJ0QDjFtv+vtn5T+mXgwQa/Y4XY+n7sVTwBcHAfAKXUWmYRTQ/0tJ+E3tTC3PmJGPV6kY9cDFpaSWg1OqHAGo9wMo3D2MjICu1BUM+h+2P6YAL0qX6IPEBTJZ/uul9V1laCuyc7/7Wg6WvwQkEGCmWsRJv7VGwnQrimRJtPM2kWKSj2UydzkE= generated-by-azure",
             "metadata": {
                 "description": "The SSH public key to use to access the Jumpbox."
             },
@@ -70,7 +107,7 @@
         },
         "cname": {
             "type": "string",
-            "defaultValue": "",
+            "defaultValue": "https://jiratest.max.edc.usda.gov",
             "metadata": {
                 "description": "An existing Canonical Name record (CNAME) to use to access the JIRA instance."
             }
@@ -88,21 +125,21 @@
                 "sqlserver",
                 "postgres"
             ],
-            "defaultValue": "sqlserver",
+            "defaultValue": "postgres",
             "metadata": {
                 "description": "The database type."
             }
         },
         "dbHost": {
             "type": "string",
-            "defaultValue": "",
+            "defaultValue": "postgresForTestMAXJira",
             "metadata": {
                 "description": "The hostname of the database server."
             }
         },
         "dbPort": {
             "type": "string",
-            "defaultValue": "[if(equals(parameters('dbType'), 'sqlserver'), '1433', if(equals(parameters('dbType'), 'postgres'), '5432', '3306'))]",
+            "defaultValue": "5432",
             "metadata": {
                 "description": "The database port to use."
             }
@@ -116,19 +153,21 @@
         },
         "dbSchema": {
             "type": "string",
-            "defaultValue": "[if(parameters('dbCreateNew'), if(equals(parameters('dbType'), 'sqlserver'), 'jiraschema', 'public'), 'jiraschema')]",
+            "defaultValue": "jiraschema",
             "metadata": {
                 "description": "The Jira database schema to use."
             }
         },
         "dbUsername": {
             "type": "string",
+			"defaultValue": "jiraadmin",
             "metadata": {
                 "description": "The username of the Jira database user."
             }
         },
         "dbPassword": {
             "type": "securestring",
+			"defaultValue": "dogland123",
             "metadata": {
                 "description": "The password of the Jira database user."
             }
@@ -278,7 +317,7 @@
         },
         "jiraAdminUserName": {
             "type": "string",
-            "defaultValue": "admin",
+            "defaultValue": "jiraadmin",
             "minLength": 5,
             "metadata": {
                 "description": "The username for the Jira administrator's account."
@@ -286,6 +325,7 @@
         },
         "jiraAdminUserPassword": {
             "type": "securestring",
+			"defaultValue": "dogland123",
             "minLength": 5,
             "metadata": {
                 "description": "The password for the Jira administrator's account."
@@ -294,6 +334,7 @@
         "jiraAdminUserFullname": {
             "type": "string",
             "minLength": 5,
+			"defaultValue": "Admin Admin",
             "metadata": {
                 "description": "The fullname for the Jira administrator's account."
             }
@@ -301,6 +342,7 @@
         "jiraAdminUserEmail": {
             "type": "string",
             "minLength": 5,
+			"defaultValue": "paul.malone@usda.gov",
             "metadata": {
                 "description": "The email address of the Jira administrator user."
             }
@@ -322,7 +364,7 @@
                 5,
                 6
             ],
-            "defaultValue": 2,
+            "defaultValue": 1,
             "minValue": 1,
             "maxValue": 6,
             "metadata": {
@@ -336,39 +378,9 @@
                 "Standard_Medium",
                 "Standard_Large"
             ],
-            "defaultValue": "Standard_Medium",
+            "defaultValue": "Standard_Small",
             "metadata": {
                 "description": "The Application Gateway size."
-            }
-        },
-        "vnetName": {
-            "type": "string",
-            "metadata": {
-                "description": "The name of the Jira virtual network."
-            }
-        },
-        "appSubnetName": {
-            "type": "string",
-            "metadata": {
-                "description": "The name of the subnet within the Jira virtual network where the Jira cluster is located."
-            }
-        },
-        "gtwySubnetName": {
-            "type": "string",
-            "metadata": {
-                "description": "The name of the Jira virtual network subnet where the Application Gateway is located."
-            }
-        },
-        "jumpboxName": {
-            "type": "string",
-            "metadata": {
-                "description": "The name of the Jumpbox."
-            }
-        },
-        "jumpboxPublicIpAddress": {
-            "type": "string",
-            "metadata": {
-                "description": "The public IP address of the Jumpbox."
             }
         },
         "sslBase64EncodedPfxCertificate": {
@@ -387,21 +399,21 @@
         },
         "enableApplicationInsights": {
             "type": "bool",
-            "defaultValue": true,
+            "defaultValue": false,
             "metadata": {
                 "description": "Enable Azure Application Insights."
             }
         },
         "enableAnalytics": {
             "type": "bool",
-            "defaultValue": true,
+            "defaultValue": false,
             "metadata": {
                 "description": "Enable Azure Operational Insights."
             }
         },
         "enableAcceleratedNetworking": {
             "type": "bool",
-            "defaultValue": true,
+            "defaultValue": false,
             "metadata": {
                 "description": "Enable accelerated networking. Note that this needs to be on a supported instance type."
             }
