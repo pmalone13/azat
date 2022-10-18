@@ -800,10 +800,19 @@ atl_log main "Installing pacapt"
 install_pacapt
 atl_log main "Done pacapt"
 
+atl_log main "Doing redhat"
 install_redhat_epel_if_needed
+
+atl_log main "Doing python"
 install_python3_if_needed
+
+atl_log main "Doing core deps"
 install_core_dependencies
+
+atl_log main "Doing prep env"
 prepare_env $1 $3 $5
+
+atl_log main "Doing set env"
 source setenv.sh
 
 if [ "$2" == "prepare" ]; then
