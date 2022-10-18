@@ -785,6 +785,7 @@ function install_jira {
 }
 
 # Spit out args
+atl_log main "Spitting out Args"
 for (( i=1; i<="$#"; i++ ))
 do
   atl_log main "Arg $i: ${!i}"
@@ -792,8 +793,13 @@ done
 
 IS_REDHAT=$(cat /etc/os-release | egrep '^ID' | grep rhel)
 IS_CENTOS=$(cat /etc/os-release | egrep '^ID' | grep centos)
+
 update_rhel_client_cert
+
+atl_log main "Installing pacapt"
 install_pacapt
+atl_log main "Done pacapt"
+
 install_redhat_epel_if_needed
 install_python3_if_needed
 install_core_dependencies
