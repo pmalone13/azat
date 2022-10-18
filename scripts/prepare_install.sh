@@ -748,8 +748,11 @@ function preloadDatabase {
 
 function prepare_install {
   env | sort
+   atl_log main "Doing keep alive"
   tune_tcp_keepalive_for_azure
+     atl_log main "Prep share"
   prepare_share
+       atl_log main "Download installer "
   download_installer
   preserve_installer
   hydrate_shared_config
@@ -819,11 +822,13 @@ if [ "$2" == "prepare" ]; then
   export SERVER_AZURE_DOMAIN="${3}"
   export DB_SERVER_NAME="${4}"
   export APPINSIGHTS_INSTRUMENTATION_KEY="${6}"
+  atl_log main "Doing prep install"
   prepare_install
 fi
 
 if [ "$2" == "install" ]; then
   export APPINSIGHTS_INSTRUMENTATION_KEY="${3}"
+  atl_log main "Doing install jira"
   install_jira
 fi
 
