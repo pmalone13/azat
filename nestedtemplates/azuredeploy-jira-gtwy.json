@@ -110,7 +110,7 @@
                     "private": {
                         "name": "[concat(variables('namespace'), 'appgwfeipconfig-private')]",
                         //"address": "10.0.1.99"
-                        "address": "10.0.0.129"
+                        "address": "10.0.0.150"
                     }
                 },
                 "portConfiguration": {
