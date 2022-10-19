@@ -189,9 +189,6 @@ function mount_share {
   mount_share="//${STORAGE_ACCOUNT}.file.core.windows.net/${ATL_JIRA_SHARED_HOME_NAME}"
   
   log "creating credentials at ${creds_file}"
-  log "using st acct... ${STORAGE_ACCOUNT}"
-  log "using st key... ${STORAGE_KEY}"
-  log "using..." 
   echo "username=${STORAGE_ACCOUNT}" >> ${creds_file}
   echo "password=${STORAGE_KEY}" >> ${creds_file}
   chmod 600 ${creds_file}
@@ -203,16 +200,15 @@ function mount_share {
     log "location ${ATL_JIRA_SHARED_HOME} is already mounted"
     return 0
   fi
-  log "about to mount..." 
+  
   [ -d "${ATL_JIRA_SHARED_HOME}" ] || mkdir -p "${ATL_JIRA_SHARED_HOME}"
   mount -t cifs ${mount_share} ${ATL_JIRA_SHARED_HOME} -o ${mount_options}
-  log "after mount and checking..." 
   
   if [ ! $(cat /etc/mtab | grep -o "${ATL_JIRA_SHARED_HOME}") ];
   then
     error "mount failed"
   fi
-  log "after checking..." 
+  
   if [ ${persist} ];
   then
     # create a backup of fstab
@@ -752,11 +748,8 @@ function preloadDatabase {
 
 function prepare_install {
   env | sort
-   atl_log main "Doing keep alive"
   tune_tcp_keepalive_for_azure
-     atl_log main "Prep share"
   prepare_share
-       atl_log main "Download installer "
   download_installer
   preserve_installer
   hydrate_shared_config
@@ -792,7 +785,6 @@ function install_jira {
 }
 
 # Spit out args
-atl_log main "Spitting out Args"
 for (( i=1; i<="$#"; i++ ))
 do
   atl_log main "Arg $i: ${!i}"
@@ -800,39 +792,23 @@ done
 
 IS_REDHAT=$(cat /etc/os-release | egrep '^ID' | grep rhel)
 IS_CENTOS=$(cat /etc/os-release | egrep '^ID' | grep centos)
-
 update_rhel_client_cert
-
-atl_log main "Installing pacapt"
 install_pacapt
-atl_log main "Done pacapt"
-
-atl_log main "Doing redhat"
 install_redhat_epel_if_needed
-
-atl_log main "Doing python"
 install_python3_if_needed
-
-atl_log main "Doing core deps"
 install_core_dependencies
-
-atl_log main "Doing prep env"
 prepare_env $1 $3 $5
-
-atl_log main "Doing set env"
 source setenv.sh
 
 if [ "$2" == "prepare" ]; then
   export SERVER_AZURE_DOMAIN="${3}"
   export DB_SERVER_NAME="${4}"
   export APPINSIGHTS_INSTRUMENTATION_KEY="${6}"
-  atl_log main "Doing prep install"
   prepare_install
 fi
 
 if [ "$2" == "install" ]; then
   export APPINSIGHTS_INSTRUMENTATION_KEY="${3}"
-  atl_log main "Doing install jira"
   install_jira
 fi
 
