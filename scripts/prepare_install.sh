@@ -186,7 +186,7 @@ function mount_share {
   local gid=${3:-0}
   creds_file="/etc/cifs.${ATL_JIRA_SHARED_HOME_NAME}"
   mount_options="vers=3.0,uid=${uid},gid=${gid},dir_mode=0750,file_mode=0640,credentials=${creds_file}"
-  mount_share="//${STORAGE_ACCOUNT}.file.core.windows.net/${ATL_JIRA_SHARED_HOME_NAME}"
+  mount_share="//${STORAGE_ACCOUNT}.file.core.usgovcloudapi.net/${ATL_JIRA_SHARED_HOME_NAME}"
   
   log "creating credentials at ${creds_file}"
   echo "username=${STORAGE_ACCOUNT}" >> ${creds_file}
