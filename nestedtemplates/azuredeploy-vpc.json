@@ -57,17 +57,18 @@
         "vnet": {
             "name": "[concat(variables('namespace'), 'vnet')]",
             //"prefix": "10.0.0.0/16"
-            "prefix": "10.0.0.0/24"
+            //"prefix": "10.0.0.0/24"
+            "prefix": "10.213.72.0/24"
         },
         "gtwySubnet": {
             "name": "[concat(variables('namespace'), 'appgwsubnet')]",
             //prrefix": "10.0.1.0/24"
-            "prefix": "10.0.0.128/26"
+            "prefix": "10.213.72.128/26"
         },
         "appSubnet": {
             "name": "[concat(variables('namespace'), 'cluster', 'subnet')]",
             //"prefix": "10.0.2.0/24",
-            "prefix": "10.0.0.0/25",
+            "prefix": "10.213.72.0/25",
             "nsg": {
                 "name": "[concat(variables('namespace'), 'cluster', 'nsg')]"
             }
@@ -98,7 +99,7 @@
             "subnet": {
                 "name": "[concat(variables('namespace'), 'jumpboxsubnet')]",
                 //"prefix": "10.0.3.0/24"
-                "prefix": "10.0.0.192/26"
+                "prefix": "10.213.72.192/26"
             },
             "nics": {
                 "public": "[concat(variables('namespace'), 'jumpbox', 'nic', 'public')]"
